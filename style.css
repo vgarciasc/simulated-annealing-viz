@@ -1,0 +1,66 @@
+body {
+	font-family: Verdana;
+	font-size: 14px;
+	background-color: bisque;
+}
+
+.data-point {
+	fill: grey;
+	r: 5;
+}
+
+.solution-point {
+	fill: black;
+	r: 5;
+}
+
+.proposed-solution-point {
+	fill: none;
+	stroke: black;
+	stroke-width: 2;
+	r: 5;
+}
+
+.best-solution-point {
+	fill: black;
+}
+
+.axis {
+	font-family: MS Gothic, Courier;
+	font-size: 14px;
+}
+
+.code-line {
+	padding: 5px;
+}
+
+.code-comment {
+	color: grey;
+}
+
+.successful-code {
+	background-color: greenyellow;
+}
+
+.errorful-code {
+	background-color: darksalmon;
+}
+
+table, th, td {
+	border: 1px solid;
+	border-collapse: collapse;
+	padding: 5px;
+}
+table {
+	border: double 4px;
+}
+td {
+	text-align: right;
+}
+
+.font-small { font-size: 12px; width: 100px;}
+.depth-1 { padding-left: 2em; }
+.depth-2 { padding-left: 3.5em; }
+.depth-3 { padding-left: 5em; }
+.depth-4 { padding-left: 6.5em; }
+.depth-5 { padding-left: 8em; }

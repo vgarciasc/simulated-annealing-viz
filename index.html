@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<script src="https://d3js.org/d3.v7.min.js"></script>
+		<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    	<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<script async defer src="https://buttons.github.io/buttons.js"></script>
+		<script src="utils.js" defer></script>
+		<script src="simulated_annealing.js" defer></script>
+		<script>
+			window.MathJax = {
+				tex: {
+			  		inlineMath: [['$', '$'], ['\\(', '\\)']]
+				}
+			};
+		</script>
+		<meta charset="utf-8" />
+	</head>
+	<body>
+		<h1>Simulated Annealing Visualization</h1>
+		<p>Lorem ipsum dorem</p>
+		<div style="display: flex">
+			<div style="margin-right: 10px;">
+				<button id="step-btn">&gt; Step</button>
+				<button id="play-btn">&gt;&gt; Play</button>
+				<br><br>
+				<div style="width: 400px;">
+					<div id="code-line-0" class="code-line">
+						Initialize $x \leftarrow \mathbf{0}$, $x_\text{min} = x$
+					</div>
+					<div id="code-line-1" class="code-line">
+						For $k = 1 \ldots k_\text{max}$:
+						<span id="code-line-1-comment" class="code-comment">
+							<!-- #0.23 <= 0.47 -->
+						</span>
+					</div>
+					<div id="code-line-2" class="code-line depth-1">
+						$T \leftarrow T_0 / \log_2(k + 1)$
+					</div>
+					<div id="code-line-3" class="code-line depth-1">
+						For $n = 1 \ldots N$:
+						<span id="code-line-3-comment" class="code-comment">
+							<!-- #0.23 <= 0.47 -->
+						</span>
+					</div>
+					<div id="code-line-4" class="code-line depth-2">
+						Randomly modify $x$ to obtain $\hat{x}$
+					</div>
+					<div id="code-line-5" class="code-line depth-2">
+						If $\text{unif}(0, 1) \leq e^{(J(x) - J(\hat{x})) / T}$:
+						<span id="code-line-5-comment" class="code-comment">
+							<!-- #0.23 <= 0.47 -->
+						</span>
+					</div>
+					<div id="code-line-6" class="code-line depth-3">
+						$x \leftarrow \hat{x}$
+					</div>
+					<div id="code-line-7" class="code-line depth-3">
+						If $J(x) \leq J(x_\text{min})$:
+						<span id="code-line-7-comment" class="code-comment">
+							<!-- #0.23 <= 0.47 -->
+						</span>
+					</div>
+					<div id="code-line-8" class="code-line depth-4">
+						$x_\text{min} \leftarrow x$
+					</div>
+				</div>
+				<br>
+				<table style="width: 24em">
+				    <colgroup>
+				       <col span="1" style="width: 15%;">
+				       <col span="1" style="width: 45%;">
+				       <col span="1" style="width: 20%;">
+				       <col span="1" style="width: 20%;">
+				    </colgroup>
+					<tbody>
+						<tr>
+							<td colspan=1>$T$</td>
+							<td colspan=1 id="table-values-T">0</td>
+						</tr>
+						<tr>
+							<td>
+								<div style="display: flex; justify-content: end; align-items: center;">
+									<svg width="1em" height="1em"><circle class="solution-point" cx="0.5em" cy="0.5em"></circle></svg>&nbsp;
+									$x$
+								</div>
+							</td>
+							<td class="font-small" id="table-values-x">0</td>
+							<td>$J(x)$</td> <td id="table-values-Jx">0</td>
+						</tr>
+						<tr>
+							<td>
+								<div style="display: flex; justify-content: end; align-items: end;">
+									<svg width="1em" height="1em"><circle class="proposed-solution-point" cx="0.5em" cy="0.5em"></circle></svg>&nbsp;
+									$\hat{x}$
+								</div>
+							</td>
+							<td class="font-small" id="table-values-xhat">0</td>
+							<td>$J(\hat{x})$</td><td id="table-values-Jxhat">0</td>
+						</tr>
+						<tr>
+							<td>
+								<div style="display: flex; justify-content: end; align-items: end;">
+									<svg width="20" height="20"><polygon class="best-solution-point" points="10,0,12.938926261462367,5.954915028125263,19.510565162951536,6.9098300562505255,14.755282581475768,11.545084971874736,15.877852522924732,18.090169943749473,10,15,4.12214747707527,18.090169943749473,5.244717418524233,11.545084971874738,0.4894348370484636,6.909830056250527,7.061073738537633,5.954915028125264"></polygon></svg>&nbsp;
+									$x_{\text{min}}$
+								</div>
+							</td>
+							<td class="font-small" id="table-values-xmin">0</td>
+							<td>$J(x_{\text{min)}}$</td><td id="table-values-Jxmin">0</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<svg id="main-view"></svg>
+			<div style="width: 400px">
+				<h2>To-do:</h2>
+				<ul>
+					<li>botar diversas configurações: temperatura inicial, k_max, N, tipo de resfriamento, quantidade de clusters, dispersão dos clusters, talvez o tipo de disposição inicialdos clusters (e se for uniforme ao inves de gaussiano?), epsilon, etc</li>
+					<li>adicionar opção: colorir os pontos de acordo com o cluster mais proximo</li>
+					<li>definir uma forma melhor de definir os clusters iniciais (as vezes eles ficam muito juntos)</li>
+					<li>adicionar uma coluna no final com texto sobre simulated annealing</li>
+					<li>testar perturbações diferentes (todas as componentes, ao inves de apenas uma?)</li>
+					<li>pensar numa forma melhor de mostrar o x_min</li>
+					<li>o que fazer com os pontos que saem da tela?</li>
+				</ul>
+			</div>
+		</div>
+	</body>
+</html>
