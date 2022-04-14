@@ -242,6 +242,7 @@ function updateSVG(solution, solution_hat, best_solution) {
 					.classed("data-point", true)
 					.attr("cx", pt => xScale(pt.x1))
 					.attr("cy", pt => yScale(pt.x2))
+					.attr("r", 5)
 			}
 		)
 
@@ -254,6 +255,7 @@ function updateSVG(solution, solution_hat, best_solution) {
 					.classed("solution-point", true)
 					.attr("cx", pt => xScale(pt.x1))
 					.attr("cy", pt => yScale(pt.x2))
+					.attr("r", 5)
 			},
 			update => {
 				update
@@ -272,6 +274,7 @@ function updateSVG(solution, solution_hat, best_solution) {
 					.classed("proposed-solution-point", true)
 					.attr("cx", pt => xScale(pt.x1))
 					.attr("cy", pt => yScale(pt.x2))
+					.attr("r", 5)
 			},
 			update => {
 				update

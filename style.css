@@ -6,19 +6,19 @@ body {
 
 .data-point {
 	fill: grey;
-	r: 5;
+	/* r: 5; */
 }
 
 .solution-point {
 	fill: black;
-	r: 5;
+	/* r: 5; */
 }
 
 .proposed-solution-point {
 	fill: none;
 	stroke: black;
 	stroke-width: 2;
-	r: 5;
+	/* r: 5; */
 }
 
 .best-solution-point {
