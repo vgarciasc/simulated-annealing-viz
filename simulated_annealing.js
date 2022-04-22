@@ -3,15 +3,16 @@ let height = 450;
 let margin = {top: 20, left: 30, right: 20, bottom: 20};
 let scale = 100;
 
+let cluster_quantity = $("#cluster-quantity").val();
+let points_per_cluster = 50;
+let epsilon = 50;
+
 const DELAY = 5;
-const cluster_quantity = 2;
-const points_per_cluster = 50;
-const epsilon = 50;
 const min_dist_between_clusters = scale / cluster_quantity;
 const colors = ["tomato", "skyblue", "limegreen", "orange", "violet"]
 const dark_colors = ["#951b1b", "mediumblue", "#15441c", "#914824", "blueviolet"]
 
-function generatePoints(clusters) {
+function generatePoints() {
 	var clusters = [];
 	var points = [];
 
@@ -180,6 +181,7 @@ function waitForButton() {
 
 let points = generatePoints();
 
+var should_abort = false;
 var curr_line = -1;
 var curr_line_state = 1;
 var x, J_x;
@@ -188,14 +190,14 @@ var x_hat, J_x_hat;
 var T;
 
 async function runSimulatedAnnealing() {
-	let max_iterations = 100;
-	let k_max = 10;
+	let max_iterations = parseInt($("#Nmax").val());
+	let k_max = parseInt($("#kmax").val());
 	let J = lossFunction;
 
 	curr_line = 0; curr_line_state = 1; updateUI(); updateSVG([], [], []);
-	if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); }
+	if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); } if (should_abort) { return; }
 
-	T0 = 1; T = undefined;
+	T0 = parseInt($("#initial-temperature").val()); T = undefined;
 	x = getInitialSolution();
 	J_x = J(x);
 	x_min = deepCopy(x);
@@ -203,12 +205,12 @@ async function runSimulatedAnnealing() {
 
 	curr_line = 1; curr_line_state = 1; updateUI(); updateSVG(x, [], x_min);
 	$("#code-line-1-comment").text("#k = 1")
-	if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); }
+	if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); } if (should_abort) { return; }
 	$("#code-line-1-comment").text("")
 
 	for (var k = 1; k <= k_max; k++) {
 		curr_line = 2; curr_line_state = 1; updateUI();
-		if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); }
+		if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); } if (should_abort) { return; }
 
 		T = T0 / (Math.log(k + 1) / Math.log(2));
 		// console.warn(`Updated temperature to ${T}.`)
@@ -216,12 +218,12 @@ async function runSimulatedAnnealing() {
 		for (var n = 1; n <= max_iterations; n++) {
 			curr_line = 3; curr_line_state = 1; updateUI();
 			$("#code-line-3-comment").text(`#n = ${n}`)
-			if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); }
+			if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); } if (should_abort) { return; }
 			$("#code-line-3-comment").text("")
 
 			if (get_button_value("should-restart-empty-clusters")) {
 				curr_line = 3.1; curr_line_state = 1; updateUI(); 
-				if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); }
+				if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); } if (should_abort) { return; }
 
 				var cluster_populations = get_cluster_populations(x);
 				var non_empty_clusters = get_cluster_populations(x)
@@ -237,7 +239,7 @@ async function runSimulatedAnnealing() {
 			}
 
 			curr_line = 4; curr_line_state = 1; updateUI(); updateSVG(x, [], x_min);
-			if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); }
+			if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); } if (should_abort) { return; }
 
 			x_hat = pickRandomNeighbor(x);
 			J_x_hat = J(x_hat)
@@ -250,25 +252,25 @@ async function runSimulatedAnnealing() {
 
 			curr_line = 5; curr_line_state = should_accept_transition ? 1 : 0; updateUI(); updateSVG(x, x_hat, x_min);
 			$("#code-line-5-comment").text(`#${random_val.toFixed(3)} <= ${Math.exp((J_x - J_x_hat) / T).toFixed(3)}`)
-			if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); }
+			if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); } if (should_abort) { return; }
 			$("#code-line-5-comment").text("")
 
 			if (should_accept_transition) {
 				// console.log(`3. Accepted new solution x_hat.`)
 				curr_line = 6; curr_line_state = 1; updateUI(); updateSVG(x, x_hat, x_min);
-				if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); }
+				if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); } if (should_abort) { return; }
 
 				x = x_hat;
 				J_x = J_x_hat;
 				
 				curr_line = 7; curr_line_state = (J_x <= J_x_min) ? 1 : 0; updateUI(); updateSVG(x, [], x_min);
 				$("#code-line-7-comment").text(`#${J_x.toFixed(3)} <= ${J_x_min.toFixed(3)}`)
-				if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); }
+				if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); } if (should_abort) { return; }
 				$("#code-line-7-comment").text("")
 
 				if (J_x <= J_x_min) {
 					curr_line = 8; curr_line_state = 1; updateUI();
-					if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); }
+					if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); } if (should_abort) { return; }
 
 					x_min = deepCopy(x);
 					J_x_min = J_x
@@ -283,13 +285,13 @@ async function runSimulatedAnnealing() {
 
 		curr_line = 3; curr_line_state = 0; updateUI();
 		$("#code-line-3-comment").text(`#n = ${max_iterations}`)
-		if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); }
+		if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); } if (should_abort) { return; }
 		$("#code-line-3-comment").text("")
 	}
 
 	curr_line = 1; curr_line_state = 0; updateUI();
 	$("#code-line-1-comment").text(`#k = ${k_max}`)
-	if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); }
+	if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); } if (should_abort) { return; }
 	$("#code-line-1-comment").text("")
 
 	console.log("Final solution is:")
@@ -311,23 +313,34 @@ function updateSVG(solution, solution_hat, best_solution) {
 					.classed("data-point", true)
 					.attr("cx", pt => xScale(pt.x1))
 					.attr("cy", pt => yScale(pt.x2))
-					.attr("r", 5)
 					.attr("fill", "gray")
+					.transition().duration(500)
+					.attr("r", 5)
 			},
 			update => {
-				update.attr("cx", pt => xScale(pt.x1))
-					.attr("cy", pt => yScale(pt.x2))
-					.attr("fill", "gray")
-				if (solution.length > 0) {
+				if (curr_line == 0) {
+					update.transition()
+						.duration(500)
+						.attr("r", 5)
+						.attr("cx", pt => xScale(pt.x1))
+						.attr("cy", pt => yScale(pt.x2))
+						.attr("fill", "gray")
+				}
+				if (solution && solution.length > 0) {
 					var assignments = assign_clusters(solution);
 					update.attr("fill", (pt, i) => colors[assignments[i]])
 				}
+			},
+			remove => {
+				remove.transition()
+					.duration(500)
+					.attr("r", 0)
 			}
 		)
 
 	main_view
 		.selectAll(".best-solution-point")
-		.data(best_solution)
+		.data(best_solution || [])
 		.join(
 			enter => {
 				enter.append("svg:polygon")
@@ -343,7 +356,7 @@ function updateSVG(solution, solution_hat, best_solution) {
 
 	main_view
 		.selectAll(".solution-point")
-		.data(solution)
+		.data(solution || [])
 		.join(
 			enter => {
 				enter.append("circle")
@@ -363,7 +376,7 @@ function updateSVG(solution, solution_hat, best_solution) {
 
 	main_view
 		.selectAll(".proposed-solution-point")
-		.data(solution_hat)
+		.data(solution_hat || [])
 		.join(
 			enter => {
 				enter.append("circle")
@@ -412,6 +425,22 @@ function updateCode() {
 			line.hide();
 		}
 	}
+}
+
+function restart() {
+	current_state = 0;
+	should_abort = true;
+	$("#step-btn").click();
+
+	setTimeout(() => {
+		should_abort = false;
+		cluster_quantity = $("#cluster-quantity").val();
+		points = generatePoints();
+
+		runSimulatedAnnealing();
+		updateSVG();
+		updateUI();
+	}, 100);
 }
 
 let xAxis = main_view

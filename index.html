@@ -117,15 +117,19 @@
 				</table>
 			</div>
 			<svg id="main-view"></svg>
-			<div style="width: 400px">
+			<div style="width: 500px">
 				<h2>Options:</h2>
 				<div style="margin-left: 1em;">
-					<b>1. Cluster quantity (1-5):</b> <label for="cluster-quantity" id="cluster-quantity-label">2</label>
+					<!-- <b>1. Cluster quantity (1-5):</b> <label for="cluster-quantity" id="cluster-quantity-label">2</label>
+					<br> -->
+					<!-- <input style="margin-left: 1em;" type="range" id="cluster-quantity" name="cluster-quantity" min="1" max="5" value="2" step="1" oninput="$('#cluster-quantity-label').text($(this).val())"> -->
+					<!-- <br> -->
+					<b>1. $\# \text{clusters}$:</b> <input type=number id="cluster-quantity" min=1 max=5 step=1 value=2 style="width:50px">,
+						$T_0$:</b> <input type=number id="initial-temperature" min=0 max=10 step=0.1 value=1.0 style="width:50px">,
+						$k_\text{max}$:</b> <input type=number id="kmax" min=1 max=100 step=1 value=10 style="width:50px">,
+						$N$:</b> <input type=number id="Nmax" min=1 max=1000 step=1 value=100 style="width:50px"> 
 					<br>
-					<input style="margin-left: 1em;" type="range" id="cluster-quantity" name="cluster-quantity" min="1" max="5" value="2" step="1" oninput="$('#cluster-quantity-label').text($(this).val())">
-					<br>
-					<b>2.</b> Should restart clusters that become empty? <input type=checkbox id="should-restart-empty-clusters" onclick="updateCode()"> 
-					<br>
+					<b>2. Should restart clusters that become empty?</b> <input type=checkbox id="should-restart-empty-clusters" onclick="updateCode()"> 
 					<br>
 					<b>3. Random modification type:</b>
 					<br>
@@ -137,13 +141,15 @@
 				</div>
 				<h2>To-do:</h2>
 				<ul>
-					<li>botar diversas configurações: temperatura inicial, k_max, N, tipo de resfriamento, quantidade de clusters, dispersão dos clusters, talvez o tipo de disposição inicialdos clusters (e se for uniforme ao inves de gaussiano?), epsilon, etc</li>
-					<li>adicionar opção: colorir os pontos de acordo com o cluster mais proximo</li>
-					<li>definir uma forma melhor de definir os clusters iniciais (as vezes eles ficam muito juntos)</li>
+					<li><s>botar diversas configurações: temperatura inicial, k_max, N, tipo de resfriamento, quantidade de clusters, dispersão dos clusters, talvez o tipo de disposição inicialdos clusters (e se for uniforme ao inves de gaussiano?), epsilon, etc</s></li>
+					<li><s>adicionar opção: colorir os pontos de acordo com o cluster mais proximo</s></li>
+					<li><s>definir uma forma melhor de definir os clusters iniciais (as vezes eles ficam muito juntos)</s></li>
 					<li>adicionar uma coluna no final com texto sobre simulated annealing</li>
-					<li>testar perturbações diferentes (todas as componentes, ao inves de apenas uma?)</li>
-					<li>pensar numa forma melhor de mostrar o x_min</li>
-					<li>o que fazer com os pontos que saem da tela?</li>
+					<li><s>testar perturbações diferentes (todas as componentes, ao inves de apenas uma?)</s></li>
+					<li><s>pensar numa forma melhor de mostrar o x_min</s></li>
+					<li><s>o que fazer com os pontos que saem da tela?</s></li>
+					<li>adicionar distinção entre 'reset clusters' e 'reset solution'</li>
+					<li>adicionar fast simulated annealing?</li>
 				</ul>
 			</div>
 		</div>
