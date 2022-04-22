@@ -25,6 +25,11 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// https://gist.github.com/janosh/099bd8061f15e3fbfcc19be0e6b670b9
+const argfact = (compareFn) => (array) => array.map((el, idx) => [el, idx]).reduce(compareFn)[1]
+const argmax = argfact((min, el) => (el[0] > min[0] ? el : min))
+const argmin = argfact((max, el) => (el[0] < max[0] ? el : max))
+
 // https://dillieodigital.wordpress.com/2013/01/16/quick-tip-how-to-draw-a-star-with-svg-and-javascript/
 function calculateStarPoints(cx, cy, arms, outerRadius, innerRadius, startAngle=0) {
   var pts = [];

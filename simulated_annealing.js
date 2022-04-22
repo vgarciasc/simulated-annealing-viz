@@ -4,10 +4,12 @@ let margin = {top: 20, left: 30, right: 20, bottom: 20};
 let scale = 100;
 
 const DELAY = 5;
-const cluster_quantity = 3;
+const cluster_quantity = 2;
 const points_per_cluster = 50;
 const epsilon = 50;
 const min_dist_between_clusters = scale / cluster_quantity;
+const colors = ["tomato", "skyblue", "limegreen", "orange", "violet"]
+const dark_colors = ["#951b1b", "mediumblue", "#15441c", "#914824", "blueviolet"]
 
 function generatePoints(clusters) {
 	var clusters = [];
@@ -26,7 +28,7 @@ function generatePoints(clusters) {
 		} while (max_distance < min_dist_between_clusters && tries < 200);
 
 		let cluster = proposed_cluster;
-		points.push(cluster);
+		// points.push(cluster);
 		clusters.push(cluster);
 
 		let dispersal = 50;
@@ -49,12 +51,42 @@ function getInitialSolution() {
 	return solution;
 }
 
+function pickPointRandomNeighbor(point) {
+	var new_point = deepCopy(point);
+
+	var modification_type = $('input[name="random-modification-type"]:checked').val();
+	switch (modification_type) {
+		case "single-cluster-single-coordinate":
+			var coord = Math.random() <= 0.5 ? 'x1' : 'x2';
+			new_point[coord] += (randomGaussian() - 0.5) * epsilon;
+			break;
+		case "single-cluster-all-coordinates":
+		case "all-clusters-all-coordinates":
+			new_point['x1'] += (randomGaussian() - 0.5) * epsilon;
+			new_point['x2'] += (randomGaussian() - 0.5) * epsilon;
+			break;
+	}
+
+
+	return new_point;
+}
+
 function pickRandomNeighbor(sol) {
 	var sol_hat = deepCopy(sol);
 
-	var idx = Math.round(Math.random() * (cluster_quantity - 1));
-	var coord = Math.random() <= 0.5 ? 'x1' : 'x2';
-	sol_hat[idx][coord] += (randomGaussian() - 0.5) * epsilon;
+	var modification_type = $('input[name="random-modification-type"]:checked').val();
+	switch (modification_type) {
+		case "single-cluster-single-coordinate":
+		case "single-cluster-all-coordinates":
+			var idx = Math.round(Math.random() * (cluster_quantity - 1));
+			sol_hat[idx] = pickPointRandomNeighbor(sol_hat[idx]);
+			break;
+		case "all-clusters-all-coordinates":
+			for (var i = 0; i < sol_hat.length; i++) {
+				sol_hat[i] = pickPointRandomNeighbor(sol_hat[i]);
+			}
+			break;
+	}
 
 	return sol_hat;
 }
@@ -76,9 +108,29 @@ function lossFunction(sol) {
 	}
 
 	return total_distance / points.length;
+}
 
-	// return points.map((pt) => Math.min(...sol.map((k) => distance(k, pt))))
-		// .reduce((a, b) => a + b) / points.length;
+function assign_clusters(solution) {
+	return points.map((pt) => argmin(solution.map((k) => distance(pt, k))));
+}
+
+function get_cluster_populations(solution) {
+	let assignment = assign_clusters(solution);
+	return solution.map((_, i) => assignment.filter((k) => k == i).length)
+}
+
+function get_first_empty_cluster(solution) {
+	let assignment = assign_clusters(solution);
+	for (var i = 0; i < solution.length; i++) {
+		if (assignment.filter((k) => k == i).length == 0) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+function get_button_value(btn_id) {
+	return $(`#${btn_id}`).prop("checked");
 }
 
 var max_iterations, T0, k_max;
@@ -167,7 +219,24 @@ async function runSimulatedAnnealing() {
 			if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); }
 			$("#code-line-3-comment").text("")
 
-			curr_line = 4; curr_line_state = 1; updateUI(); 
+			if (get_button_value("should-restart-empty-clusters")) {
+				curr_line = 3.1; curr_line_state = 1; updateUI(); 
+				if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); }
+
+				var cluster_populations = get_cluster_populations(x);
+				var non_empty_clusters = get_cluster_populations(x)
+					.map((f, i) => {return {pop: f, idx: i}})
+					.filter((f) => f.pop != 0)
+					.map((f) => f.idx)
+
+				cluster_populations.forEach((pop, k) => {
+					if (pop == 0) {
+						x[k] = pickPointRandomNeighbor(x[non_empty_clusters.random()]);
+					}
+				})
+			}
+
+			curr_line = 4; curr_line_state = 1; updateUI(); updateSVG(x, [], x_min);
 			if (current_state == 0) { await waitForButton(); } else { await sleep(DELAY); }
 
 			x_hat = pickRandomNeighbor(x);
@@ -243,6 +312,32 @@ function updateSVG(solution, solution_hat, best_solution) {
 					.attr("cx", pt => xScale(pt.x1))
 					.attr("cy", pt => yScale(pt.x2))
 					.attr("r", 5)
+					.attr("fill", "gray")
+			},
+			update => {
+				update.attr("cx", pt => xScale(pt.x1))
+					.attr("cy", pt => yScale(pt.x2))
+					.attr("fill", "gray")
+				if (solution.length > 0) {
+					var assignments = assign_clusters(solution);
+					update.attr("fill", (pt, i) => colors[assignments[i]])
+				}
+			}
+		)
+
+	main_view
+		.selectAll(".best-solution-point")
+		.data(best_solution)
+		.join(
+			enter => {
+				enter.append("svg:polygon")
+					.classed("best-solution-point", true)
+					.attr("points", pt => calculateStarPoints(xScale(pt.x1), yScale(pt.x2), 5, 10, 5, -90))
+					.attr("fill", (pt, i) => dark_colors[i])
+			},
+			update => {
+				update
+					.attr("points", pt => calculateStarPoints(xScale(pt.x1), yScale(pt.x2), 5, 10, 5, -90));
 			}
 		)
 
@@ -256,6 +351,7 @@ function updateSVG(solution, solution_hat, best_solution) {
 					.attr("cx", pt => xScale(pt.x1))
 					.attr("cy", pt => yScale(pt.x2))
 					.attr("r", 5)
+					.attr("fill", (pt, i) => dark_colors[i])
 			},
 			update => {
 				update
@@ -275,27 +371,13 @@ function updateSVG(solution, solution_hat, best_solution) {
 					.attr("cx", pt => xScale(pt.x1))
 					.attr("cy", pt => yScale(pt.x2))
 					.attr("r", 5)
+					.attr("fill", (pt, i) => dark_colors[i])
 			},
 			update => {
 				update
 					// .transition().duration(500)
 					.attr("cx", pt => xScale(pt.x1))
 					.attr("cy", pt => yScale(pt.x2))
-			}
-		)
-
-	main_view
-		.selectAll(".best-solution-point")
-		.data(best_solution)
-		.join(
-			enter => {
-				enter.append("svg:polygon")
-					.classed("best-solution-point", true)
-					.attr("points", pt => calculateStarPoints(xScale(pt.x1), yScale(pt.x2), 5, 10, 5, -90));
-			},
-			update => {
-				update
-					.attr("points", pt => calculateStarPoints(xScale(pt.x1), yScale(pt.x2), 5, 10, 5, -90));
 			}
 		)
 }
@@ -314,7 +396,22 @@ function updateUI() {
 
 	$(".code-line").removeClass("successful-code");
 	$(".code-line").removeClass("errorful-code");
-	$(`#code-line-${curr_line}`).addClass(curr_line_state ? "successful-code" : "errorful-code");
+
+	var curr_line_str = String(curr_line).replace(".", "-");
+ 	$(`#code-line-${curr_line_str}`).addClass(curr_line_state ? "successful-code" : "errorful-code");
+}
+
+function updateCode() {
+	for (var i = 0; i < $(".conditional-code-line").length; i++) {
+		var line = $($(".conditional-code-line")[i]);
+		var condition = line.attr("condition");
+
+		if (get_button_value(condition)) {
+			line.show();
+		} else {
+			line.hide();
+		}
+	}
 }
 
 let xAxis = main_view

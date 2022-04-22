@@ -2,8 +2,8 @@
 <html lang="en">
 	<head>
 		<script src="https://d3js.org/d3.v7.min.js"></script>
-		<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     	<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+		<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css">
 		<script async defer src="https://buttons.github.io/buttons.js"></script>
 		<script src="utils.js" defer></script>
@@ -17,13 +17,14 @@
 		</script>
 		<meta charset="utf-8" />
 	</head>
-	<body>
+	<body onload="updateCode()">
 		<h1>Simulated Annealing Visualization</h1>
 		<p>Lorem ipsum dorem</p>
 		<div style="display: flex">
 			<div style="margin-right: 10px;">
 				<button id="step-btn">&gt; Step</button>
 				<button id="play-btn">&gt;&gt; Play</button>
+				<button id="reset-btn" onclick="restart()">[] Reset</button>
 				<br><br>
 				<div style="width: 400px;">
 					<div id="code-line-0" class="code-line">
@@ -43,6 +44,9 @@
 						<span id="code-line-3-comment" class="code-comment">
 							<!-- #0.23 <= 0.47 -->
 						</span>
+					</div>
+					<div id="code-line-3-1" condition="should-restart-empty-clusters" class="code-line conditional-code-line depth-2">
+						Restart empty clusters
 					</div>
 					<div id="code-line-4" class="code-line depth-2">
 						Randomly modify $x$ to obtain $\hat{x}$
@@ -114,6 +118,23 @@
 			</div>
 			<svg id="main-view"></svg>
 			<div style="width: 400px">
+				<h2>Options:</h2>
+				<div style="margin-left: 1em;">
+					<b>1. Cluster quantity (1-5):</b> <label for="cluster-quantity" id="cluster-quantity-label">2</label>
+					<br>
+					<input style="margin-left: 1em;" type="range" id="cluster-quantity" name="cluster-quantity" min="1" max="5" value="2" step="1" oninput="$('#cluster-quantity-label').text($(this).val())">
+					<br>
+					<b>2.</b> Should restart clusters that become empty? <input type=checkbox id="should-restart-empty-clusters" onclick="updateCode()"> 
+					<br>
+					<br>
+					<b>3. Random modification type:</b>
+					<br>
+					<input type=radio name="random-modification-type" value="single-cluster-single-coordinate" checked>Single cluster, single coordinate
+					<br>
+					<input type=radio name="random-modification-type" value="single-cluster-all-coordinates">Single cluster, all coordinates
+					<br>
+					<input type=radio name="random-modification-type" value="all-clusters-all-coordinates">All clusters, all coordinates
+				</div>
 				<h2>To-do:</h2>
 				<ul>
 					<li>botar diversas configurações: temperatura inicial, k_max, N, tipo de resfriamento, quantidade de clusters, dispersão dos clusters, talvez o tipo de disposição inicialdos clusters (e se for uniforme ao inves de gaussiano?), epsilon, etc</li>

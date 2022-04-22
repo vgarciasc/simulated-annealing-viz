@@ -5,13 +5,15 @@ body {
 }
 
 .data-point {
-	fill: grey;
+	/*fill: grey;*/
 	/* r: 5; */
 }
 
 .solution-point {
-	fill: black;
+	/*fill: black;*/
 	/* r: 5; */
+	/*stroke: black;*/
+	/*stroke-width: 1;*/
 }
 
 .proposed-solution-point {
@@ -22,7 +24,9 @@ body {
 }
 
 .best-solution-point {
-	fill: black;
+	/*fill: black;*/
+	stroke: black;
+	stroke-width: 2;
 }
 
 .axis {
