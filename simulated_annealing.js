@@ -55,8 +55,8 @@ function getInitialSolution() {
 function pickPointRandomNeighbor(point) {
 	var new_point = deepCopy(point);
 
-	var modification_type = $('input[name="random-modification-type"]:checked').val();
-	switch (modification_type) {
+	var perturbation_type = $('input[name="random-perturbation-type"]:checked').val();
+	switch (perturbation_type) {
 		case "single-cluster-single-coordinate":
 			var coord = Math.random() <= 0.5 ? 'x1' : 'x2';
 			new_point[coord] += (randomGaussian() - 0.5) * epsilon;
@@ -75,8 +75,8 @@ function pickPointRandomNeighbor(point) {
 function pickRandomNeighbor(sol) {
 	var sol_hat = deepCopy(sol);
 
-	var modification_type = $('input[name="random-modification-type"]:checked').val();
-	switch (modification_type) {
+	var perturbation_type = $('input[name="random-perturbation-type"]:checked').val();
+	switch (perturbation_type) {
 		case "single-cluster-single-coordinate":
 		case "single-cluster-all-coordinates":
 			var idx = Math.round(Math.random() * (cluster_quantity - 1));
@@ -174,7 +174,9 @@ function waitForButton() {
 				$("#play-btn").text(">> Play");
 			}
 
-			resolve();
+			if (id != "reset-btn") {
+				resolve();
+			}
 		})
 	});
 }
@@ -301,7 +303,10 @@ async function runSimulatedAnnealing() {
 let xScale = d3.scaleLinear().domain([0, scale]).range([margin.left, width - margin.left]);
 let yScale = d3.scaleLinear().domain([0, scale]).range([height - margin.bottom, margin.bottom]);
 
-let main_view = d3.selectAll("#main-view").attr("width", width).attr("height", height);
+let main_view = d3.selectAll("#main-view")
+	// .attr("width", width).attr("height", height)
+	.attr("viewBox", `0 0 ${width} ${height}`)
+	.attr("preserveAspectRatio", "xMidYMid meet")
 
 function updateSVG(solution, solution_hat, best_solution) {
 	main_view
@@ -427,7 +432,23 @@ function updateCode() {
 	}
 }
 
-function restart() {
+function reset_algorithm() {
+	current_state = 0;
+	should_abort = true;
+	$("#step-btn").click();
+
+	setTimeout(() => {
+		should_abort = false;
+		// cluster_quantity = $("#cluster-quantity").val();
+		// points = generatePoints();
+
+		runSimulatedAnnealing();
+		updateSVG();
+		updateUI();
+	}, 100);
+}
+
+function reset_points() {
 	current_state = 0;
 	should_abort = true;
 	$("#step-btn").click();

@@ -15,63 +15,120 @@
 				}
 			};
 		</script>
+		<!-- Place this tag in your head or just before your close body tag. -->
+		<script async defer src="https://buttons.github.io/buttons.js"></script>
 		<meta charset="utf-8" />
 	</head>
 	<body onload="updateCode()">
-		<h1>Simulated Annealing Visualization</h1>
-		<p>Lorem ipsum dorem</p>
+		<!-- <h1>Simulated Annealing Visualization</h1> -->
 		<div style="display: flex">
-			<div style="margin-right: 10px;">
+			<div style="width: 30%;">
+				<div style="display: flex; line-height: 10px; background-color: burlywood;">
+					<img src="https://i.imgur.com/8heu0x7.png">
+					&nbsp;&nbsp;
+					<h1>Simulated Annealing</h1>
+					<!-- Place this tag where you want the button to render. -->
+				</div>
+				<!-- Place this tag where you want the button to render. -->
+				<a class="github-button" href="https://github.com/vgarciasc/simulated-annealing-viz" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star vgarciasc/simulated-annealing-viz on GitHub">Star</a>
+				<p>The <b>Simulated Annealing</b> (SA) algorithm is a meta-heuristic, that is, a technique for approximating the global optimum of a function $J(x)$. SA is inspired by the annealing process in metallurgy, where a metal is molded by carefully altering its temperature over time. In this page, you can find a visualization of SA being applied in a clustering application.</p>
+				<p>Informally, <b>this is how SA works</b>: the algorithm starts with a high temperature and a initial solution $x$. Each iteration, this solution is randomly modified in some way, and the resulting solution is evaluated. If it is better than what we currently have, then great!, just use that instead. However, if the resulting solution is worse than what we currently have, then we still have <i>some</i> probability of accepting that candidate as our current solution. In particular, this probability is affected by the current temperature of the algorithm. Over time, this temperature gets reduced and we become more and more conservative (only accepting better solutions). It is useful to think about the two extremes: if the temperature is $0$, then only better solutions are accepted; if the temperature is $\infty$, then any solution is accepted, no matter how bad.</p>
+				<p>More formally, the algorithm is divided into inner and outer loops. In each of the $N$ <b>inner loop</b> iterations (<span class="line-number">line 3</span>), we apply a random perturbation to the current solution $x$ (<span class="line-number">line 5</span>) and obtain a candidate solution $\hat{x}$. Then, we compare $x$ and $\hat{x}$ (<span class="line-number">line 6</span>): if $\hat{x}$ is <i>better</i> than $x$ (i.e. if $J(\hat{x}) \leq J(x)$), then we accept $\hat{x}$ as our new current solution $x$ (<span class="line-number">line 7</span>). But if $\hat{x}$ is <i>worse</i> than $x$, then we only accept $\hat{x}$ with a probability that is proportional to the relative quality of the new solution (i.e. the worse the solution, the lower the probability) and also proportional to a parameter $T$ called <i>temperature</i> (i.e. the higher the temperature, the higher the probability). This probability is captured by the term $e^{(J(x) - J(\hat{x})) / T}$ in <span class="line-number">line 6</span> (notice that if $\hat{x}$ is better than $x$, then $J(\hat{x}) \leq J(x)$ and the probability check always returns true).</p>
+				<p>In each of the $k_{\max}$ <b>outer loop</b> iterations (<span class="line-number">line 1</span>), the temperature $T$ is reduced in a process called <i>cooling</i> (<span class="line-number">line 2</span>). This has the effect of making the algorithm more conservative over time: in the beginning the temperature is high, so worse solutions are occasionally accepted; however as the execution progresses, the temperature is reduced and it becomes hard to accept worse solutions.</p>
+				<p>Finally, the algorithm always checks if a solution $x$ is the <b>best one yet</b> (<span class="line-number">line 8</span>). If it is, then it is stored as $x_{\min}$ (<span class="line-number">line 9</span>). This is what the algorithm returns at the end of its execution.</p>
+				<!-- <h2>To-do:</h2>
+				<ul>
+					<li><s>botar diversas configurações: temperatura inicial, k_max, N, tipo de resfriamento, quantidade de clusters, dispersão dos clusters, talvez o tipo de disposição inicialdos clusters (e se for uniforme ao inves de gaussiano?), epsilon, etc</s></li>
+					<li><s>adicionar opção: colorir os pontos de acordo com o cluster mais proximo</s></li>
+					<li><s>definir uma forma melhor de definir os clusters iniciais (as vezes eles ficam muito juntos)</s></li>
+					<li>adicionar uma coluna no final com texto sobre simulated annealing</li>
+					<li><s>testar perturbações diferentes (todas as componentes, ao inves de apenas uma?)</s></li>
+					<li><s>pensar numa forma melhor de mostrar o x_min</s></li>
+					<li><s>o que fazer com os pontos que saem da tela?</s></li>
+					<li>adicionar distinção entre 'reset clusters' e 'reset solution'</li>
+					<li>adicionar fast simulated annealing?</li>
+				</ul> -->
+			</div>
+			<div style="width: 30%;">
+				<br><br>
+				<div style="padding: 10px; border: dashed 1px black; height: fit-content; margin-left: 10px">
+					<svg id="main-view"></svg>
+				</div>
+			</div>
+			<div style="margin-left: 10px; width: 30%">
+				<h2>Options:</h2>
+				<div style="margin-left: 1em;">
+					<!-- <b>1. Cluster quantity (1-5):</b> <label for="cluster-quantity" id="cluster-quantity-label">2</label>
+					<br> -->
+					<!-- <input style="margin-left: 1em;" type="range" id="cluster-quantity" name="cluster-quantity" min="1" max="5" value="2" step="1" oninput="$('#cluster-quantity-label').text($(this).val())"> -->
+					<!-- <br> -->
+					<b>1. $\# \text{clusters}$:</b> <input type=number id="cluster-quantity" min=1 max=5 step=1 value=2 style="width:50px">,
+						$T_0$:</b> <input type=number id="initial-temperature" min=0 max=10 step=0.1 value=1.0 style="width:50px">,
+						$k_\text{max}$:</b> <input type=number id="kmax" min=1 max=100 step=1 value=10 style="width:50px">,
+						$N$:</b> <input type=number id="Nmax" min=1 max=1000 step=1 value=100 style="width:50px"> 
+					<br>
+					<b>2. Should restart clusters that become empty?</b> <input type=checkbox id="should-restart-empty-clusters" onclick="updateCode()"> 
+					<br>
+					<b>3. Random perturbation type:</b>
+					<br>
+					<input type=radio name="random-perturbation-type" value="single-cluster-single-coordinate" checked>Single cluster, single coordinate
+					<br>
+					<input type=radio name="random-perturbation-type" value="single-cluster-all-coordinates">Single cluster, all coordinates
+					<br>
+					<input type=radio name="random-perturbation-type" value="all-clusters-all-coordinates">All clusters, all coordinates
+				</div>
+				<hr>
 				<button id="step-btn">&gt; Step</button>
 				<button id="play-btn">&gt;&gt; Play</button>
-				<button id="reset-btn" onclick="restart()">[] Reset</button>
+				<button id="play-btn" onclick="reset_algorithm()">[] Restart</button>
+				<button id="reset-btn" onclick="reset_points()">[] Generate new points</button>
 				<br><br>
-				<div style="width: 400px;">
+				<div style="width: 100%; border: solid 1px black;">
 					<div id="code-line-0" class="code-line">
-						Initialize $x \leftarrow \mathbf{0}$, $x_\text{min} = x$
+						<span class="line-number">0.</span> Initialize $x \leftarrow \mathbf{0}$, $x_\text{min} = x$
 					</div>
 					<div id="code-line-1" class="code-line">
-						For $k = 1 \ldots k_\text{max}$:
+						<span class="line-number">1.</span> For $k = 1 \ldots k_\text{max}$:
 						<span id="code-line-1-comment" class="code-comment">
 							<!-- #0.23 <= 0.47 -->
 						</span>
 					</div>
 					<div id="code-line-2" class="code-line depth-1">
-						$T \leftarrow T_0 / \log_2(k + 1)$
+						<span class="line-number">2.</span> $T \leftarrow T_0 / \log_2(k + 1)$
 					</div>
 					<div id="code-line-3" class="code-line depth-1">
-						For $n = 1 \ldots N$:
+						<span class="line-number">3.</span> For $n = 1 \ldots N$:
 						<span id="code-line-3-comment" class="code-comment">
 							<!-- #0.23 <= 0.47 -->
 						</span>
 					</div>
 					<div id="code-line-3-1" condition="should-restart-empty-clusters" class="code-line conditional-code-line depth-2">
-						Restart empty clusters
+						<span class="line-number">4.</span> Restart empty clusters
 					</div>
 					<div id="code-line-4" class="code-line depth-2">
-						Randomly modify $x$ to obtain $\hat{x}$
+						<span class="line-number">5.</span> Randomly perturb $x$ to obtain $\hat{x}$
 					</div>
 					<div id="code-line-5" class="code-line depth-2">
-						If $\text{unif}(0, 1) \leq e^{(J(x) - J(\hat{x})) / T}$:
+						<span class="line-number">6.</span> If $\text{unif}(0, 1) \leq e^{(J(x) - J(\hat{x})) / T}$:
 						<span id="code-line-5-comment" class="code-comment">
 							<!-- #0.23 <= 0.47 -->
 						</span>
 					</div>
 					<div id="code-line-6" class="code-line depth-3">
-						$x \leftarrow \hat{x}$
+						<span class="line-number">7.</span> $x \leftarrow \hat{x}$
 					</div>
 					<div id="code-line-7" class="code-line depth-3">
-						If $J(x) \leq J(x_\text{min})$:
+						<span class="line-number">8.</span> If $J(x) \leq J(x_\text{min})$:
 						<span id="code-line-7-comment" class="code-comment">
 							<!-- #0.23 <= 0.47 -->
 						</span>
 					</div>
 					<div id="code-line-8" class="code-line depth-4">
-						$x_\text{min} \leftarrow x$
+						<span class="line-number">9.</span> $x_\text{min} \leftarrow x$
 					</div>
 				</div>
 				<br>
-				<table style="width: 24em">
+				<table style="width: 100%">
 				    <colgroup>
 				       <col span="1" style="width: 15%;">
 				       <col span="1" style="width: 45%;">
@@ -90,18 +147,8 @@
 									$x$
 								</div>
 							</td>
-							<td class="font-small" id="table-values-x">0</td>
+							<td class="font-small coordinates" id="table-values-x">0</td>
 							<td>$J(x)$</td> <td id="table-values-Jx">0</td>
-						</tr>
-						<tr>
-							<td>
-								<div style="display: flex; justify-content: end; align-items: end;">
-									<svg width="1em" height="1em"><circle class="proposed-solution-point" r="5" cx="0.5em" cy="0.5em"></circle></svg>&nbsp;
-									$\hat{x}$
-								</div>
-							</td>
-							<td class="font-small" id="table-values-xhat">0</td>
-							<td>$J(\hat{x})$</td><td id="table-values-Jxhat">0</td>
 						</tr>
 						<tr>
 							<td>
@@ -110,47 +157,21 @@
 									$x_{\text{min}}$
 								</div>
 							</td>
-							<td class="font-small" id="table-values-xmin">0</td>
+							<td class="font-small coordinates" id="table-values-xmin">0</td>
 							<td>$J(x_{\text{min)}}$</td><td id="table-values-Jxmin">0</td>
+						</tr>
+						<tr>
+							<td>
+								<div style="display: flex; justify-content: end; align-items: end;">
+									<svg width="1em" height="1em"><circle class="proposed-solution-point" r="5" cx="0.5em" cy="0.5em"></circle></svg>&nbsp;
+									$\hat{x}$
+								</div>
+							</td>
+							<td class="font-small coordinates" id="table-values-xhat">0</td>
+							<td>$J(\hat{x})$</td><td id="table-values-Jxhat">0</td>
 						</tr>
 					</tbody>
 				</table>
-			</div>
-			<svg id="main-view"></svg>
-			<div style="width: 500px">
-				<h2>Options:</h2>
-				<div style="margin-left: 1em;">
-					<!-- <b>1. Cluster quantity (1-5):</b> <label for="cluster-quantity" id="cluster-quantity-label">2</label>
-					<br> -->
-					<!-- <input style="margin-left: 1em;" type="range" id="cluster-quantity" name="cluster-quantity" min="1" max="5" value="2" step="1" oninput="$('#cluster-quantity-label').text($(this).val())"> -->
-					<!-- <br> -->
-					<b>1. $\# \text{clusters}$:</b> <input type=number id="cluster-quantity" min=1 max=5 step=1 value=2 style="width:50px">,
-						$T_0$:</b> <input type=number id="initial-temperature" min=0 max=10 step=0.1 value=1.0 style="width:50px">,
-						$k_\text{max}$:</b> <input type=number id="kmax" min=1 max=100 step=1 value=10 style="width:50px">,
-						$N$:</b> <input type=number id="Nmax" min=1 max=1000 step=1 value=100 style="width:50px"> 
-					<br>
-					<b>2. Should restart clusters that become empty?</b> <input type=checkbox id="should-restart-empty-clusters" onclick="updateCode()"> 
-					<br>
-					<b>3. Random modification type:</b>
-					<br>
-					<input type=radio name="random-modification-type" value="single-cluster-single-coordinate" checked>Single cluster, single coordinate
-					<br>
-					<input type=radio name="random-modification-type" value="single-cluster-all-coordinates">Single cluster, all coordinates
-					<br>
-					<input type=radio name="random-modification-type" value="all-clusters-all-coordinates">All clusters, all coordinates
-				</div>
-				<h2>To-do:</h2>
-				<ul>
-					<li><s>botar diversas configurações: temperatura inicial, k_max, N, tipo de resfriamento, quantidade de clusters, dispersão dos clusters, talvez o tipo de disposição inicialdos clusters (e se for uniforme ao inves de gaussiano?), epsilon, etc</s></li>
-					<li><s>adicionar opção: colorir os pontos de acordo com o cluster mais proximo</s></li>
-					<li><s>definir uma forma melhor de definir os clusters iniciais (as vezes eles ficam muito juntos)</s></li>
-					<li>adicionar uma coluna no final com texto sobre simulated annealing</li>
-					<li><s>testar perturbações diferentes (todas as componentes, ao inves de apenas uma?)</s></li>
-					<li><s>pensar numa forma melhor de mostrar o x_min</s></li>
-					<li><s>o que fazer com os pontos que saem da tela?</s></li>
-					<li>adicionar distinção entre 'reset clusters' e 'reset solution'</li>
-					<li>adicionar fast simulated annealing?</li>
-				</ul>
 			</div>
 		</div>
 	</body>

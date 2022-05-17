@@ -51,20 +51,22 @@ body {
 }
 
 table, th, td {
-	border: 1px solid;
+	border: 1px dashed;
 	border-collapse: collapse;
 	padding: 5px;
 }
 table {
-	border: double 4px;
+	border: 1px solid;
 }
 td {
 	text-align: right;
 }
 
-.font-small { font-size: 12px; width: 100px;}
+td.coordinates { width: 100px; height: 3em; }
+.font-small { font-size: 12px;}
 .depth-1 { padding-left: 2em; }
 .depth-2 { padding-left: 3.5em; }
 .depth-3 { padding-left: 5em; }
 .depth-4 { padding-left: 6.5em; }
 .depth-5 { padding-left: 8em; }
+.line-number { color: grey }
