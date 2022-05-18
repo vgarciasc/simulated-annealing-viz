@@ -32,7 +32,7 @@
 				<!-- Place this tag where you want the button to render. -->
 				<a class="github-button" href="https://github.com/vgarciasc/simulated-annealing-viz" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star vgarciasc/simulated-annealing-viz on GitHub">Star</a>
 				<p>The <b>Simulated Annealing</b> (SA) algorithm is a meta-heuristic, that is, a technique for approximating the global optimum of a function $J(x)$. SA is inspired by the annealing process in metallurgy, where a metal is molded by carefully altering its temperature over time. In this page, you can find a visualization of SA being applied in a clustering application.</p>
-				<p>Informally, <b>this is how SA works</b>: the algorithm starts with a high temperature and a initial solution $x$. Each iteration, this solution is randomly modified in some way, and the resulting solution is evaluated. If it is better than what we currently have, then great!, just use that instead. However, if the resulting solution is worse than what we currently have, then we still have <i>some</i> probability of accepting that candidate as our current solution. In particular, this probability is affected by the current temperature of the algorithm. Over time, this temperature gets reduced and we become more and more conservative (only accepting better solutions). It is useful to think about the two extremes: if the temperature is $0$, then only better solutions are accepted; if the temperature is $\infty$, then any solution is accepted, no matter how bad.</p>
+				<p>Informally, <b>this is how SA works</b>: the algorithm starts with a high temperature and a initial solution $x$. Each iteration, this solution is randomly modified in some way, and the resulting solution is evaluated. If it is better than what we currently have, then great!, just use that instead. However, if the resulting solution is worse than what we currently have, then we still have <i>some</i> probability of accepting that candidate as our current solution; in particular, this probability is affected by the current temperature of the algorithm. Over time, this temperature gets reduced and we become more and more conservative (only accepting better solutions). It is useful to think about the two extremes: if the temperature is $0$, then only better solutions are accepted; if the temperature is $\infty$, then any solution is accepted, no matter how bad.</p>
 				<p>More formally, the algorithm is divided into inner and outer loops. In each of the $N$ <b>inner loop</b> iterations (<span class="line-number">line 3</span>), we apply a random perturbation to the current solution $x$ (<span class="line-number">line 5</span>) and obtain a candidate solution $\hat{x}$. Then, we compare $x$ and $\hat{x}$ (<span class="line-number">line 6</span>): if $\hat{x}$ is <i>better</i> than $x$ (i.e. if $J(\hat{x}) \leq J(x)$), then we accept $\hat{x}$ as our new current solution $x$ (<span class="line-number">line 7</span>). But if $\hat{x}$ is <i>worse</i> than $x$, then we only accept $\hat{x}$ with a probability that is proportional to the relative quality of the new solution (i.e. the worse the solution, the lower the probability) and also proportional to a parameter $T$ called <i>temperature</i> (i.e. the higher the temperature, the higher the probability). This probability is captured by the term $e^{(J(x) - J(\hat{x})) / T}$ in <span class="line-number">line 6</span> (notice that if $\hat{x}$ is better than $x$, then $J(\hat{x}) \leq J(x)$ and the probability check always returns true).</p>
 				<p>In each of the $k_{\max}$ <b>outer loop</b> iterations (<span class="line-number">line 1</span>), the temperature $T$ is reduced in a process called <i>cooling</i> (<span class="line-number">line 2</span>). This has the effect of making the algorithm more conservative over time: in the beginning the temperature is high, so worse solutions are occasionally accepted; however as the execution progresses, the temperature is reduced and it becomes hard to accept worse solutions.</p>
 				<p>Finally, the algorithm always checks if a solution $x$ is the <b>best one yet</b> (<span class="line-number">line 8</span>). If it is, then it is stored as $x_{\min}$ (<span class="line-number">line 9</span>). This is what the algorithm returns at the end of its execution.</p>
@@ -49,13 +49,13 @@
 					<li>adicionar fast simulated annealing?</li>
 				</ul> -->
 			</div>
-			<div style="width: 30%;">
+			<div style="width: 35%;">
 				<br><br>
 				<div style="padding: 10px; border: dashed 1px black; height: fit-content; margin-left: 10px">
 					<svg id="main-view"></svg>
 				</div>
 			</div>
-			<div style="margin-left: 10px; width: 30%">
+			<div style="margin-left: 10px; width: 35%">
 				<h2>Options:</h2>
 				<div style="margin-left: 1em;">
 					<!-- <b>1. Cluster quantity (1-5):</b> <label for="cluster-quantity" id="cluster-quantity-label">2</label>
